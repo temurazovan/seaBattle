@@ -23,10 +23,12 @@ void displayField(bool arr[10][10]) {
     std::cout << "----------------------------------------" << std::endl;
 }
 
-void placeShip(Coordinates x, Coordinates y, bool arr[10][10]) {
-    for (int i = x.x; i < y.x; i++) {
-        for (int j = x.y; j < y.y; j++) {
-            arr[i][j] = true;
+void placeShip(Coordinates begin, Coordinates end, bool arr[10][10]) {
+    for (int i = begin.x; i <= end.x; i++) {
+        for (int j = begin.y; j <= end.y; j++) {
+            if (!arr[i][j]) {
+                arr[i][j] = true;
+            }
         }
     }
 }
@@ -41,42 +43,15 @@ bool checkCoordinates(int c) {
 int main() {
     bool field1[10][10];
     bool field2[10][10];
+    Coordinates begin{}, end{};
 
     initialization(field1);
     initialization(field2);
 
-//    std::cout << "Player 1, enter coordinates : ";
-//    std::cin >> x.x >> y.y >> x.x >> y.y;
-//    placeShip(x, y, field1);
-    char dir = 0;
-
-    int x = 0;
-    int y = 0;
+    std::cout << "Player 1, enter coordinates [x][y] [x1][y1]: ";
+    std::cin >> begin.x >> begin.y >> end.x >> end.y;
+    placeShip(begin, end, field1);
 
 
-    while (dir != 'e') {
-        std::cin >> dir;
-        if (dir == 'w') {
-            y--;
-        }
-        if (dir == 's') {
-            y++;
-        }
-        if (dir == 'a') {
-            x--;
-        }
-        if (dir == 'd') {
-            x++;
-        }
-        if ((checkCoordinates(y)) && checkCoordinates(x)) {
-            field1[y][x] = true;
-            displayField(field1);
-            continue;
-        } else {
-            std::cout << "out of bounds";
-            break;
-        }
-    }
-
-    //displayField(field1);
+    displayField(field1);
 }
