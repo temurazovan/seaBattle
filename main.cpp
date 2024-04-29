@@ -33,8 +33,16 @@ void placeShip(Coordinates begin, Coordinates end, bool arr[10][10]) {
     }
 }
 
-bool checkCoordinates(int c) {
-    if (c < 0 || c > 9) {
+bool checkCoordinates(Coordinates first, Coordinates second) {
+    if ((first.x < 0 || first.x > 9)
+        || (first.y < 0 || first.y > 9)
+        || (second.x < 0 || second.x > 9)
+        || (second.y < 0 || second.y > 9)) {
+        std::cout << "Error! Wrong input" << std::endl;
+        return false;
+    }
+    if ((first.x != second.x) && (first.y != second.y)){
+        std::cout << "You can't place ship this way" << std::endl;
         return false;
     }
     return true;
@@ -50,8 +58,14 @@ int main() {
 
     std::cout << "Player 1, enter coordinates [x][y] [x1][y1]: ";
     std::cin >> begin.x >> begin.y >> end.x >> end.y;
-    placeShip(begin, end, field1);
+    if (checkCoordinates(begin, end)) {
+        placeShip(begin, end, field1);
+    }
 
+    std::cout << "Player 2, enter coordinates [x][y] [x1][y1]: ";
+    std::cin >> begin.x >> begin.y >> end.x >> end.y;
+    if (checkCoordinates(begin, end)) {
+        placeShip(begin, end, field2);
+    }
 
-    displayField(field1);
 }
