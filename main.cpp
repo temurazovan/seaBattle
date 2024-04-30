@@ -52,7 +52,8 @@ bool checkCoordinates(Coordinates first, Coordinates second) {
         std::cout << "You can't place ship this way" << std::endl;
         return false;
     }
-    if ((first.x - second.x < 0) || (first.y - second.y > 4)){ //если меньше 1 и больше 4х палуб
+    if ((first.x - second.x < 0) || (first.x - second.x > 4)               //если меньше 1 и больше 4х палуб
+        || (first.y - second.y < 0) || (first.y - second.y > 4)) {
         std::cout << "it is impossible to place a ship with so many decks!" << std::endl;
         return false;
     }
@@ -86,6 +87,7 @@ void shipCounter(int deckCounter) { // счетчик кораблей с раз
     }
 }
 
+
 int main() {
     bool field1[10][10];
     bool field2[10][10];
@@ -94,18 +96,21 @@ int main() {
     initialization(field1);
     initialization(field2);
 
-    std::cout << "Player 1, enter coordinates [x][y] [x1][y1]: ";
-    std::cin >> begin.x >> begin.y >> end.x >> end.y;
-    if (checkCoordinates(begin, end)) {
-        shipCounter(deckCounter(begin, end));
-        placeShip(begin, end, field1);
-    }
+    while (true) {
+        std::cout << "Player 1, enter coordinates [x][y] [x1][y1]: ";
+        std::cin >> begin.x >> begin.y >> end.x >> end.y;
+        if (checkCoordinates(begin, end)) {
+            shipCounter(deckCounter(begin, end));
+            placeShip(begin, end, field1);
+        }
+        displayField(field1);
 
-    std::cout << "Player 2, enter coordinates [x][y] [x1][y1]: ";
-    std::cin >> begin.x >> begin.y >> end.x >> end.y;
-    if (checkCoordinates(begin, end)) {
-        shipCounter(deckCounter(begin, end));
-        placeShip(begin, end, field2);
+        std::cout << "Player 2, enter coordinates [x][y] [x1][y1]: ";
+        std::cin >> begin.x >> begin.y >> end.x >> end.y;
+        if (checkCoordinates(begin, end)) {
+            shipCounter(deckCounter(begin, end));
+            placeShip(begin, end, field2);
+        }
+        displayField(field2);
     }
-
 }
