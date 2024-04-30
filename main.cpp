@@ -4,6 +4,13 @@ struct Coordinates {
     int x, y;
 };
 
+struct Decks {
+    int singleDeck = 0; //кол-во однопалубных кораблей
+    int doubleDeck = 0; //кол-во двупалубных
+    int threeDeck = 0; //кол-во трехпалубных
+    int fourDeck = 0; //кол-во четырехпалубных
+};
+
 void initialization(bool arr[10][10]) {
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
@@ -41,11 +48,42 @@ bool checkCoordinates(Coordinates first, Coordinates second) {
         std::cout << "Error! Wrong input" << std::endl;
         return false;
     }
-    if ((first.x != second.x) && (first.y != second.y)){
+    if ((first.x != second.x) && (first.y != second.y)) { //если корабли расположены диагонально
         std::cout << "You can't place ship this way" << std::endl;
         return false;
     }
+    if ((first.x - second.x < 0) || (first.y - second.y > 4)){ //если меньше 1 и больше 4х палуб
+        std::cout << "it is impossible to place a ship with so many decks!" << std::endl;
+        return false;
+    }
     return true;
+}
+
+int deckCounter(Coordinates begin, Coordinates end) { //счетчик палуб
+    int counter = 0;
+    if (begin.x != end.x) {
+        counter = begin.x - end.x;
+    } else {
+        counter = begin.y - end.y;
+    }
+
+    return counter;
+}
+
+void shipCounter(int deckCounter) { // счетчик кораблей с разным кол-вом палуб
+    Decks ship;
+    if (deckCounter == 0) {
+        ship.singleDeck++;
+    }
+    if (deckCounter == 1) {
+        ship.doubleDeck++;
+    }
+    if (deckCounter == 2) {
+        ship.threeDeck++;
+    }
+    if (deckCounter == 3) {
+        ship.fourDeck++;
+    }
 }
 
 int main() {
@@ -59,12 +97,14 @@ int main() {
     std::cout << "Player 1, enter coordinates [x][y] [x1][y1]: ";
     std::cin >> begin.x >> begin.y >> end.x >> end.y;
     if (checkCoordinates(begin, end)) {
+        shipCounter(deckCounter(begin, end));
         placeShip(begin, end, field1);
     }
 
     std::cout << "Player 2, enter coordinates [x][y] [x1][y1]: ";
     std::cin >> begin.x >> begin.y >> end.x >> end.y;
     if (checkCoordinates(begin, end)) {
+        shipCounter(deckCounter(begin, end));
         placeShip(begin, end, field2);
     }
 
