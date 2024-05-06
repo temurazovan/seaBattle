@@ -71,8 +71,7 @@ int deckCounter(Coordinates begin, Coordinates end) { //счетчик палу�
     return counter;
 }
 
-void shipCounter(int deckCounter) { // счетчик кораблей с разным кол-вом палуб
-    Decks ship;
+Decks shipCounter(int deckCounter, Decks ship) { // счетчик кораблей с разным кол-вом палуб
     if (deckCounter == 0) {
         ship.singleDeck++;
     }
@@ -85,22 +84,33 @@ void shipCounter(int deckCounter) { // счетчик кораблей с раз
     if (deckCounter == 3) {
         ship.fourDeck++;
     }
+
+    return ship;
 }
 
+bool isFilled(Decks ship) {
+    if (ship.singleDeck == 4 && ship.doubleDeck == 3 && ship.threeDeck == 2 && ship.fourDeck == 1) {
+        return true;
+    }
+
+    return false;
+}
 
 int main() {
     bool field1[10][10];
     bool field2[10][10];
     Coordinates begin{}, end{};
+    Decks ship1, ship2;
+    int deckCounter = 0;
 
     initialization(field1);
     initialization(field2);
 
-    while (true) {
+    while (!isFilled(shipCounter())) {
         std::cout << "Player 1, enter coordinates [x][y] [x1][y1]: ";
         std::cin >> begin.x >> begin.y >> end.x >> end.y;
         if (checkCoordinates(begin, end)) {
-            shipCounter(deckCounter(begin, end));
+            shipCounter(deckCounter(begin, end), ship1);
             placeShip(begin, end, field1);
         }
         displayField(field1);
@@ -108,7 +118,7 @@ int main() {
         std::cout << "Player 2, enter coordinates [x][y] [x1][y1]: ";
         std::cin >> begin.x >> begin.y >> end.x >> end.y;
         if (checkCoordinates(begin, end)) {
-            shipCounter(deckCounter(begin, end));
+            shipCounter(deckCounter(begin, end), ship2);
             placeShip(begin, end, field2);
         }
         displayField(field2);
