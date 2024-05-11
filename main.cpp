@@ -31,8 +31,8 @@ void displayField(bool arr[10][10]) {
 }
 
 void placeShip(Coordinates begin, Coordinates end, bool arr[10][10]) {
-    for (int i = begin.x; i <= end.x; i++) {
-        for (int j = begin.y; j <= end.y; j++) {
+    for (int i = begin.x - 1; i <= end.x - 1; i++) {
+        for (int j = begin.y - 1; j <= end.y - 1; j++) {
             if (!arr[i][j]) {
                 arr[i][j] = true;
             }
@@ -40,11 +40,11 @@ void placeShip(Coordinates begin, Coordinates end, bool arr[10][10]) {
     }
 }
 
-bool checkCoordinates(Coordinates first, Coordinates second) {
-    if ((first.x < 0 || first.x > 9)
-        || (first.y < 0 || first.y > 9)
-        || (second.x < 0 || second.x > 9)
-        || (second.y < 0 || second.y > 9)) {
+bool checkCoordinates(Coordinates first, Coordinates second, bool arr[10][10]) {
+    if ((first.x < 1 || first.x > 10)
+        || (first.y < 1 || first.y > 10)
+        || (second.x < 1 || second.x > 10)
+        || (second.y < 1 || second.y > 10)) {
         std::cout << "Error! Wrong input" << std::endl;
         return false;
     }
@@ -52,36 +52,40 @@ bool checkCoordinates(Coordinates first, Coordinates second) {
         std::cout << "You can't place ship this way" << std::endl;
         return false;
     }
-    if ((first.x - second.x < 0) || (first.x - second.x > 4)               //если меньше 1 и больше 4х палуб
-        || (first.y - second.y < 0) || (first.y - second.y > 4)) {
+    if (((abs(first.x - second.x) < 0)) || (abs(first.x - second.x) > 3)               //если меньше 1 и больше 4х палуб
+        || (abs(first.y - second.y) < 0) || (abs(first.y - second.y) > 3)) {
         std::cout << "it is impossible to place a ship with so many decks!" << std::endl;
+        return false;
+    }
+    if (arr[first.x - 1][first.y - 1] || arr[second.x - 1][second.y - 1]) {    //если ячейка уже занята
+        std::cout << "This cell is already busy" << std::endl;
         return false;
     }
     return true;
 }
 
-int deckCounter(Coordinates begin, Coordinates end) { //счетчик палуб
+int deckCounter(Coordinates begin, Coordinates end) { //счетчик палуб (количество занятых на поле клеточек одного корабля)
     int counter = 0;
     if (begin.x != end.x) {
-        counter = begin.x - end.x;
+        counter = abs(begin.x - end.x) + 1;
     } else {
-        counter = begin.y - end.y;
+        counter = abs(begin.y - end.y) + 1;
     }
 
     return counter;
 }
 
-Decks shipCounter(int deckCounter, Decks ship) { // счетчик кораблей с разным кол-вом палуб
-    if (deckCounter == 0) {
+Decks shipCounter(int deckCounter, Decks &ship) { // счетчик кораблей с разным кол-вом палуб
+    if (deckCounter == 1) {
         ship.singleDeck++;
     }
-    if (deckCounter == 1) {
+    if (deckCounter == 2) {
         ship.doubleDeck++;
     }
-    if (deckCounter == 2) {
+    if (deckCounter == 3) {
         ship.threeDeck++;
     }
-    if (deckCounter == 3) {
+    if (deckCounter == 4) {
         ship.fourDeck++;
     }
 
@@ -97,30 +101,31 @@ bool isFilled(Decks ship) {
 }
 
 int main() {
-    bool field1[10][10];
-    bool field2[10][10];
+    bool map1[10][10];
+    bool map2[10][10];
     Coordinates begin{}, end{};
     Decks ship1, ship2;
-    int deckCounter = 0;
 
-    initialization(field1);
-    initialization(field2);
+    initialization(map1);
+    initialization(map2);
 
-    while (!isFilled(shipCounter())) {
+    while (!isFilled(ship1) && !isFilled(ship2)) {
         std::cout << "Player 1, enter coordinates [x][y] [x1][y1]: ";
         std::cin >> begin.x >> begin.y >> end.x >> end.y;
-        if (checkCoordinates(begin, end)) {
-            shipCounter(deckCounter(begin, end), ship1);
-            placeShip(begin, end, field1);
+        while (!checkCoordinates(begin, end, map1)) {
+            std::cin >> begin.x >> begin.y >> end.x >> end.y;
         }
-        displayField(field1);
+        shipCounter(deckCounter(begin, end), ship1);
+        placeShip(begin, end, map1);
+        displayField(map1);
 
         std::cout << "Player 2, enter coordinates [x][y] [x1][y1]: ";
         std::cin >> begin.x >> begin.y >> end.x >> end.y;
-        if (checkCoordinates(begin, end)) {
-            shipCounter(deckCounter(begin, end), ship2);
-            placeShip(begin, end, field2);
+        while (!checkCoordinates(begin, end, map2)) {
+            std::cin >> begin.x >> begin.y >> end.x >> end.y;
         }
-        displayField(field2);
+        shipCounter(deckCounter(begin, end), ship2);
+        placeShip(begin, end, map2);
+        displayField(map2);
     }
 }
