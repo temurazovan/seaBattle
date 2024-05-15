@@ -19,7 +19,7 @@ void initialization(bool arr[10][10]) {
     }
 }
 
-void displayField(bool arr[10][10]) {
+void displayMap(bool arr[10][10]) {
     for (int i = 0; i < 10; i++) {
         std::cout << "----------------------------------------" << std::endl;
         for (int j = 0; j < 10; j++) {
@@ -75,21 +75,25 @@ int deckCounter(Coordinates begin, Coordinates end) { //счетчик палу�
     return counter;
 }
 
-Decks shipCounter(int deckCounter, Decks &ship) { // счетчик кораблей с разным кол-вом палуб
-    if (deckCounter == 1) {
+bool shipCounter(int deckCounter, Decks &ship) { // счетчик кораблей с разным кол-вом палуб
+    if (deckCounter == 1 && ship.singleDeck <= 4) {
         ship.singleDeck++;
+        return true;
     }
-    if (deckCounter == 2) {
+    if (deckCounter == 2 && ship.doubleDeck <= 3) {
         ship.doubleDeck++;
+        return true;
     }
-    if (deckCounter == 3) {
+    if (deckCounter == 3 && ship.threeDeck <= 2) {
         ship.threeDeck++;
+        return true;
     }
-    if (deckCounter == 4) {
+    if (deckCounter == 4 && ship.fourDeck <= 1) {
         ship.fourDeck++;
+        return true;
     }
 
-    return ship;
+    return false;
 }
 
 bool isFilled(Decks ship) {
@@ -100,11 +104,34 @@ bool isFilled(Decks ship) {
     return false;
 }
 
+bool win(bool arr[10][10]) {
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            if (arr[i][j] != 0) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+void bombShip(Coordinates begin, Coordinates end, bool map[10][10]) {
+    for (int i = begin.x - 1; i <= end.x - 1; i++) {
+        for (int j = begin.y - 1; j <= end.y - 1; j++) {
+            if (map[i][j]) {
+                map[i][j] = false;
+            }
+        }
+    }
+}
+
 int main() {
     bool map1[10][10];
     bool map2[10][10];
     Coordinates begin{}, end{};
     Decks ship1, ship2;
+    Decks bombedShip1, bombedShip2;
 
     initialization(map1);
     initialization(map2);
@@ -112,20 +139,52 @@ int main() {
     while (!isFilled(ship1) && !isFilled(ship2)) {
         std::cout << "Player 1, enter coordinates [x][y] [x1][y1]: ";
         std::cin >> begin.x >> begin.y >> end.x >> end.y;
+
         while (!checkCoordinates(begin, end, map1)) {
             std::cin >> begin.x >> begin.y >> end.x >> end.y;
         }
-        shipCounter(deckCounter(begin, end), ship1);
-        placeShip(begin, end, map1);
-        displayField(map1);
-
+        if (shipCounter(deckCounter(begin, end), ship1)) {
+            placeShip(begin, end, map1);
+            displayMap(map1); //удалить после теста
+        }
         std::cout << "Player 2, enter coordinates [x][y] [x1][y1]: ";
         std::cin >> begin.x >> begin.y >> end.x >> end.y;
+
         while (!checkCoordinates(begin, end, map2)) {
             std::cin >> begin.x >> begin.y >> end.x >> end.y;
         }
-        shipCounter(deckCounter(begin, end), ship2);
-        placeShip(begin, end, map2);
-        displayField(map2);
+        if (shipCounter(deckCounter(begin, end), ship2)) {
+            placeShip(begin, end, map2);
+            displayMap(map2); //удалить после теста
+        }
     }
+
+    while (!win(map1) || !win(map2)) {
+        std::cout << "Player 1, enter coordinates [x][y] [x1][y1]: ";
+        std::cin >> begin.x >> begin.y >> end.x >> end.y;
+
+        while (!checkCoordinates(begin, end, map1)) {
+            std::cin >> begin.x >> begin.y >> end.x >> end.y;
+        }
+        if (shipCounter(deckCounter(begin, end), bombedShip1)) {
+            placeShip(begin, end, map1);
+            bombShip(begin, end, map1);
+            displayMap(map1);
+        }
+
+        std::cout << "Player 2, enter coordinates [x][y] [x1][y1]: ";
+        std::cin >> begin.x >> begin.y >> end.x >> end.y;
+
+        while (!checkCoordinates(begin, end, map2)) {
+            std::cin >> begin.x >> begin.y >> end.x >> end.y;
+        }
+        if (shipCounter(deckCounter(begin, end), bombedShip2)) {
+            placeShip(begin, end, map2);
+            bombShip(begin, end, map2);
+            displayMap(map2);
+        }
+
+    }
+
+
 }
