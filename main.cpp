@@ -64,7 +64,8 @@ bool checkCoordinates(Coordinates first, Coordinates second, bool arr[10][10]) {
     return true;
 }
 
-int deckCounter(Coordinates begin, Coordinates end) { //счетчик палуб (количество занятых на поле клеточек одного корабля)
+int
+deckCounter(Coordinates begin, Coordinates end) { //счетчик палуб (количество занятых на поле клеточек одного корабля)
     int counter = 0;
     if (begin.x != end.x) {
         counter = abs(begin.x - end.x) + 1;
@@ -76,22 +77,23 @@ int deckCounter(Coordinates begin, Coordinates end) { //счетчик палу�
 }
 
 bool shipCounter(int deckCounter, Decks &ship) { // счетчик кораблей с разным кол-вом палуб
-    if (deckCounter == 1 && ship.singleDeck <= 4) {
+    if (deckCounter == 1 && ship.singleDeck < 4) {
         ship.singleDeck++;
         return true;
     }
-    if (deckCounter == 2 && ship.doubleDeck <= 3) {
+    if (deckCounter == 2 && ship.doubleDeck < 3) {
         ship.doubleDeck++;
         return true;
     }
-    if (deckCounter == 3 && ship.threeDeck <= 2) {
+    if (deckCounter == 3 && ship.threeDeck < 2) {
         ship.threeDeck++;
         return true;
     }
-    if (deckCounter == 4 && ship.fourDeck <= 1) {
+    if (deckCounter == 4 && ship.fourDeck < 1) {
         ship.fourDeck++;
         return true;
     }
+    std::cout << "There are already many such ships on the map" << std::endl;
 
     return false;
 }
@@ -107,7 +109,7 @@ bool isFilled(Decks ship) {
 bool win(bool arr[10][10]) {
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
-            if (arr[i][j] != 0) {
+            if (arr[i][j]) {
                 return false;
             }
         }
@@ -116,14 +118,24 @@ bool win(bool arr[10][10]) {
     return true;
 }
 
-void bombShip(Coordinates begin, Coordinates end, bool map[10][10]) {
-    for (int i = begin.x - 1; i <= end.x - 1; i++) {
-        for (int j = begin.y - 1; j <= end.y - 1; j++) {
+void bombShip(int x, int y, bool map[10][10]) {
+    for (int i = x - 1; i <= x - 1; i++) {
+        for (int j = y - 1; j <= y - 1; j++) {
             if (map[i][j]) {
                 map[i][j] = false;
             }
         }
     }
+    std::cout << "Hit!" << std::endl;
+}
+
+bool checkBombCoordinates(int x, int y, bool map[10][10]) {
+    if ((x < 1 || x > 10) || (y < 1 || y > 10)) {
+        std::cout << "Error! Wrong input" << std::endl;
+        return false;
+    }
+
+    return true;
 }
 
 int main() {
@@ -131,7 +143,7 @@ int main() {
     bool map2[10][10];
     Coordinates begin{}, end{};
     Decks ship1, ship2;
-    Decks bombedShip1, bombedShip2;
+    int x = 0, y = 0;
 
     initialization(map1);
     initialization(map2);
@@ -139,52 +151,42 @@ int main() {
     while (!isFilled(ship1) && !isFilled(ship2)) {
         std::cout << "Player 1, enter coordinates [x][y] [x1][y1]: ";
         std::cin >> begin.x >> begin.y >> end.x >> end.y;
-
         while (!checkCoordinates(begin, end, map1)) {
             std::cin >> begin.x >> begin.y >> end.x >> end.y;
         }
         if (shipCounter(deckCounter(begin, end), ship1)) {
             placeShip(begin, end, map1);
-            displayMap(map1); //удалить после теста
         }
+
         std::cout << "Player 2, enter coordinates [x][y] [x1][y1]: ";
         std::cin >> begin.x >> begin.y >> end.x >> end.y;
-
         while (!checkCoordinates(begin, end, map2)) {
             std::cin >> begin.x >> begin.y >> end.x >> end.y;
         }
         if (shipCounter(deckCounter(begin, end), ship2)) {
             placeShip(begin, end, map2);
-            displayMap(map2); //удалить после теста
         }
     }
 
     while (!win(map1) || !win(map2)) {
-        std::cout << "Player 1, enter coordinates [x][y] [x1][y1]: ";
-        std::cin >> begin.x >> begin.y >> end.x >> end.y;
-
-        while (!checkCoordinates(begin, end, map1)) {
-            std::cin >> begin.x >> begin.y >> end.x >> end.y;
-        }
-        if (shipCounter(deckCounter(begin, end), bombedShip1)) {
-            placeShip(begin, end, map1);
-            bombShip(begin, end, map1);
-            displayMap(map1);
-        }
-
-        std::cout << "Player 2, enter coordinates [x][y] [x1][y1]: ";
-        std::cin >> begin.x >> begin.y >> end.x >> end.y;
-
-        while (!checkCoordinates(begin, end, map2)) {
-            std::cin >> begin.x >> begin.y >> end.x >> end.y;
-        }
-        if (shipCounter(deckCounter(begin, end), bombedShip2)) {
-            placeShip(begin, end, map2);
-            bombShip(begin, end, map2);
+        std::cout << "Player 1, enter coordinates [x][y] [x1][y1] to bomb ship: ";
+        std::cin >> x >> y;
+        while (checkBombCoordinates(x, y, map2) && map2[x - 1][y - 1]) {
+            bombShip(x, y, map2);
             displayMap(map2);
+            std::cout << "Player 1, enter coordinates [x][y] [x1][y1] to bomb ship: ";
+            std::cin >> x >> y;
         }
 
+        std::cout << "Player 2, enter coordinates [x][y] [x1][y1] to bomb ship: ";
+        std::cin >> x >> y;
+        while (checkBombCoordinates(x, y, map1) && map1[x - 1][y - 1]) {
+            bombShip(x, y, map1);
+            displayMap(map1);
+            std::cout << "Player 2, enter coordinates [x][y] [x1][y1] to bomb ship: ";
+            std::cin >> x >> y;
+        }
     }
 
-
+    return 0;
 }
