@@ -33,5 +33,5 @@
 *.app
 cmake-build-debug
 .idea
-readme.cpp
+readme.md
 
