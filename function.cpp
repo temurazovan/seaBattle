@@ -1,5 +1,12 @@
 #include <iostream>
 
+enum class State {
+    Empty = 0,
+    Ship = 1,
+    DestroyedShip = 2,
+    Miss = 4
+};
+
 struct Coordinates {
     int x, y;
 };
@@ -11,21 +18,21 @@ struct Decks {
     int fourDeck = 0; //кол-во четырехпалубных
 };
 
-void initialization(bool arr[10][10]) {
+void initialization(State arr[10][10]) {
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
-            arr[i][j] = false;
+            arr[i][j] = State::Empty;
         }
     }
 }
 
-void displayMap(bool arr[10][10], int x, int y) {
+void displayMap(State arr[10][10], bool isEnemy) {
     for (int i = 0; i < 10; i++) {
         std::cout << "----------------------------------------" << std::endl;
         for (int j = 0; j < 10; j++) {
             std::cout << "| ";
-            if (arr[x][y]) {
-                std::cout << "X" << " ";
+            if (arr[i][j] == State::Ship && !isEnemy) {
+                std::cout << "#" << " ";
             }else{
                 std::cout << " " << " ";
             }
@@ -35,17 +42,17 @@ void displayMap(bool arr[10][10], int x, int y) {
     std::cout << "----------------------------------------" << std::endl;
 }
 
-void placeShip(Coordinates begin, Coordinates end, bool arr[10][10]) {
+void placeShip(Coordinates begin, Coordinates end, State arr[10][10]) {
     for (int i = begin.x - 1; i <= end.x - 1; i++) {
         for (int j = begin.y - 1; j <= end.y - 1; j++) {
-            if (!arr[i][j]) {
-                arr[i][j] = true;
+            if (arr[i][j] == State::Empty) {
+                arr[i][j] = State::Ship;
             }
         }
     }
 }
 
-bool checkCoordinates(Coordinates first, Coordinates second, bool arr[10][10]) {
+bool checkCoordinates(Coordinates first, Coordinates second, State arr[10][10]) {
     if ((first.x < 1 || first.x > 10)
         || (first.y < 1 || first.y > 10)
         || (second.x < 1 || second.x > 10)
@@ -57,12 +64,14 @@ bool checkCoordinates(Coordinates first, Coordinates second, bool arr[10][10]) {
         std::cout << "You can't place ship this way" << std::endl;
         return false;
     }
-    if (((abs(first.x - second.x) < 0)) || (abs(first.x - second.x) > 3)               //если меньше 1 и больше 4х палуб
+    //если меньше 1 и больше 4х палуб
+    if (((abs(first.x - second.x) < 0)) || (abs(first.x - second.x) > 3)
         || (abs(first.y - second.y) < 0) || (abs(first.y - second.y) > 3)) {
         std::cout << "it is impossible to place a ship with so many decks!" << std::endl;
         return false;
     }
-    if (arr[first.x - 1][first.y - 1] || arr[second.x - 1][second.y - 1]) {    //если ячейка уже занята
+    //если ячейка уже занята
+    if (arr[first.x - 1][first.y - 1] == State::Ship || arr[second.x - 1][second.y - 1] == State::Ship) {
         std::cout << "This cell is already busy" << std::endl;
         return false;
     }
@@ -112,10 +121,10 @@ bool isFilled(Decks ship) {
     return false;
 }
 
-bool win(bool arr[10][10]) {
+bool win(State arr[10][10]) {
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
-            if (arr[i][j]) {
+            if (arr[i][j] == State::Ship) {
                 return false;
             }
         }
@@ -124,11 +133,11 @@ bool win(bool arr[10][10]) {
     return true;
 }
 
-void bombShip(int x, int y, bool map[10][10]) {
+void bombShip(int x, int y, State map[10][10]) {
     for (int i = x - 1; i <= x - 1; i++) {
         for (int j = y - 1; j <= y - 1; j++) {
-            if (map[i][j]) {
-                map[i][j] = false;
+            if (map[i][j] == State::Ship) {
+                map[i][j] = State::DestroyedShip;
             }
         }
     }
@@ -142,4 +151,15 @@ bool checkBombCoordinates(int x, int y) {
     }
 
     return true;
+}
+
+void inputShip(State map[10][10], Decks &ship) {
+    Coordinates begin{}, end{};
+    std::cin >> begin.x >> begin.y >> end.x >> end.y;
+    while (!checkCoordinates(begin, end, map)) {
+        std::cin >> begin.x >> begin.y >> end.x >> end.y;
+    }
+    if (shipCounter(deckCounter(begin, end), ship)) {
+        placeShip(begin, end, map);
+    }
 }

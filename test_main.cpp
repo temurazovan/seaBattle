@@ -34,7 +34,7 @@ TEST(SeaBattle, IsFilledNegative) {
 }
 
 TEST(SeaBattle, Win) {
-    bool arr[10][10] = {
+    State arr[10][10] = {
             true, false, true, false, true, true, true, false, false, false,
             false, false, true, false, false, false, false, false, false, false,
             true, false, false, false, true, true, true, false, false, false,
@@ -99,5 +99,6 @@ TEST(SeaBattle, DeckCounterNegative) {
     Coordinates end = {7, 4};
     EXPECT_EQ(deckCounter(begin, end), 1);
 }
+
 
 
