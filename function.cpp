@@ -26,14 +26,18 @@ void initialization(State arr[10][10]) {
     }
 }
 
-void displayMap(State arr[10][10], bool isEnemy) {
+void displayMap(State arr[10][10], bool isEnemy, Coordinates bomb) {
     for (int i = 0; i < 10; i++) {
         std::cout << "----------------------------------------" << std::endl;
         for (int j = 0; j < 10; j++) {
             std::cout << "| ";
             if (arr[i][j] == State::Ship && !isEnemy) {
                 std::cout << "#" << " ";
-            }else{
+            } else if (arr[i][j] == arr[bomb.x - 1][bomb.y - 1] && arr[i][j] == State::DestroyedShip && isEnemy) {
+                std::cout << "X" << " ";
+            } else if (arr[i][j] == arr[bomb.x - 1][bomb.y - 1] && arr[i][j] == State::Miss && isEnemy) {
+                std::cout << "." << " ";
+            } else {
                 std::cout << " " << " ";
             }
         }
@@ -138,10 +142,13 @@ void bombShip(int x, int y, State map[10][10]) {
         for (int j = y - 1; j <= y - 1; j++) {
             if (map[i][j] == State::Ship) {
                 map[i][j] = State::DestroyedShip;
+                std::cout << "Hit!" << std::endl;
+            } else if (map[i][j] == State::Empty) {
+                map[i][j] = State::Miss;
+                std::cout << "Missed!" << std::endl;
             }
         }
     }
-    std::cout << "Hit!" << std::endl;
 }
 
 bool checkBombCoordinates(int x, int y) {
