@@ -1,85 +1,36 @@
 #include <iostream>
 #include "function.cpp"
-
+//#include "mockdata.cpp"
 
 int main() {
-//    State map1[10][10];
-//    State map2[10][10];
+    State map1[10][10];
+    State map2[10][10];
     Decks ship1, ship2;
-    Coordinates bomb = {0, 0};
 
-//    initialization(map1);
-//    initialization(map2);
-//
-//    while (!isFilled(ship1)) {
-//        std::cout << "Player 1, enter coordinates [x][y] [x1][y1]: ";
-//        inputShip(map1, ship1);
-//        displayMap(map1, false);
-//    }
-//    while (!isFilled(ship2)) {
-//        std::cout << "Player 2, enter coordinates [x][y] [x1][y1]: ";
-//        inputShip(map2, ship2);
-//        displayMap(map2, false);
-//    }
+    initialization(map1);
+    initialization(map2);
 
-    State map1[10][10] = {State::Ship, State::Empty, State::Empty, State::Empty, State::Ship, State::Ship,State::Empty, State::Ship, State::Ship,State::Empty,
-                          State::Empty, State::Ship, State::Empty, State::Empty, State::Empty,State::Empty,State::Empty,State::Empty,State::Empty,State::Ship,
-                          State::Empty, State::Empty, State::Ship, State::Empty, State::Ship, State::Ship, State::Empty,State::Empty,State::Empty,State::Ship,
-                          State::Empty,State::Empty,State::Empty, State::Ship, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Ship,
-                          State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty,
-                          State::Ship, State::Ship, State::Ship, State::Empty, State::Ship, State::Ship, State::Ship, State::Ship, State::Empty, State::Empty,
-                          State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty,
-                          State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty,
-                          State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty,
-                          State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty,
-    };
-    State map2[10][10] = {State::Ship, State::Empty, State::Empty, State::Empty, State::Ship, State::Ship,State::Empty, State::Ship, State::Ship,State::Empty,
-                          State::Empty, State::Ship, State::Empty, State::Empty, State::Empty,State::Empty,State::Empty,State::Empty,State::Empty,State::Ship,
-                          State::Empty, State::Empty, State::Ship, State::Empty, State::Ship, State::Ship, State::Empty,State::Empty,State::Empty,State::Ship,
-                          State::Empty,State::Empty,State::Empty, State::Ship, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Ship,
-                          State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty,
-                          State::Ship, State::Ship, State::Ship, State::Empty, State::Ship, State::Ship, State::Ship, State::Ship, State::Empty, State::Empty,
-                          State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty,
-                          State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty,
-                          State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty,
-                          State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty, State::Empty,
-    };
-    while (!win(map1) || !win(map2)) {
-        // пока координаты проходят проверку И это попадение в корабль
-        while (true) {
-            std::cout << "Player 1, enter coordinates [x][y] [x1][y1] to bomb ship: ";
-            std::cin >> bomb.x >> bomb.y;
-            if (checkBombCoordinates(bomb.x, bomb.y) && map2[bomb.x - 1][bomb.y - 1] == State::Ship) {
-                bombShip(bomb.x, bomb.y, map2);
-                displayMap(map2, true);
-            } else if (checkBombCoordinates(bomb.x, bomb.y) && map2[bomb.x - 1][bomb.y - 1] != State::Ship){
-                bombShip(bomb.x, bomb.y, map2);
-                displayMap(map2, true);
-                break;
-            } else {
-                break;
-            }
+    while (!isFilled(ship1)) {
+        std::cout << "Player 1, enter coordinates [x][y] [x1][y1]: ";
+        inputShip(map1, ship1);
+        displayMap(map1, false);
+    }
+    while (!isFilled(ship2)) {
+        std::cout << "Player 2, enter coordinates [x][y] [x1][y1]: ";
+        inputShip(map2, ship2);
+        displayMap(map2, false);
+    }
+
+    while (true) {
+        if (playerTurn("Player 1", map2)) {
+            std::cout << "Player 1 is win!";
+            break;
         }
-
-        // пока координаты проходят проверку И это попадение в корабль
-        while (true) {
-            std::cout << "Player 2, enter coordinates [x][y] [x1][y1] to bomb ship: ";
-            std::cin >> bomb.x >> bomb.y;
-            if (checkBombCoordinates(bomb.x, bomb.y) && map1[bomb.x - 1][bomb.y - 1] == State::Ship) {
-                bombShip(bomb.x, bomb.y, map1);
-                displayMap(map1, true);
-            } else if (checkBombCoordinates(bomb.x, bomb.y) && map1[bomb.x - 1][bomb.y - 1] != State::Ship){
-                bombShip(bomb.x, bomb.y, map1);
-                displayMap(map1, true);
-                break;
-            } else {
-                break;
-            }
+        if (playerTurn("Player 2", map1)) {
+            std::cout << "Player 2 is win!";
+            break;
         }
     }
 
     return 0;
 }
-
-
-

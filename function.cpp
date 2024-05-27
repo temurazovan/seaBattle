@@ -1,22 +1,6 @@
 #include <iostream>
+#include "types.cpp"
 
-enum class State {
-    Empty = 0,
-    Ship = 1,
-    DestroyedShip = 2,
-    Miss = 4
-};
-
-struct Coordinates {
-    int x, y;
-};
-
-struct Decks {
-    int singleDeck = 0; //кол-во однопалубных кораблей
-    int doubleDeck = 0; //кол-во двупалубных
-    int threeDeck = 0; //кол-во трехпалубных
-    int fourDeck = 0; //кол-во четырехпалубных
-};
 
 void initialization(State arr[10][10]) {
     for (int i = 0; i < 10; i++) {
@@ -145,23 +129,23 @@ bool win(State arr[10][10]) {
     return true;
 }
 
-void bombShip(int x, int y, State map[10][10]) {
+bool bombShip(int x, int y, State map[10][10]) {
+    bool isHit = false;
     for (int i = x - 1; i <= x - 1; i++) {
         for (int j = y - 1; j <= y - 1; j++) {
             if (map[i][j] == State::Ship) {
                 map[i][j] = State::DestroyedShip;
-                std::cout << "Hit!" << std::endl;
+                isHit = true;
             } else if (map[i][j] == State::Empty) {
                 map[i][j] = State::Miss;
-                std::cout << "Missed!" << std::endl;
             }
         }
     }
+    return isHit;
 }
 
 bool checkBombCoordinates(int x, int y) {
     if ((x < 1 || x > 10) || (y < 1 || y > 10)) {
-        std::cout << "Error! Wrong input" << std::endl;
         return false;
     }
 
@@ -177,4 +161,27 @@ void inputShip(State map[10][10], Decks &ship) {
     if (shipCounter(deckCounter(begin, end), ship)) {
         placeShip(begin, end, map);
     }
+}
+
+bool playerTurn(std::string playerName, State map[10][10]) {
+    bool isWin = false;
+    Coordinates bomb;
+    while (true) {
+        std::cout << playerName << ", enter coordinates [x][y] [x1][y1] to bomb ship: ";
+        std::cin >> bomb.x >> bomb.y;
+        if (!checkBombCoordinates(bomb.x, bomb.y)) {
+            std::cout << "Error! Wrong input" << std::endl;
+            continue;
+        }
+
+        bool hitShip = bombShip(bomb.x, bomb.y, map);
+        std::cout << (hitShip ? "Hit!" : "Missed!") << std::endl;
+        displayMap(map, true);
+        isWin = win(map);
+        if (isWin || !hitShip) {
+            break;
+        }
+    }
+
+    return isWin;
 }
