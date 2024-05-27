@@ -26,20 +26,28 @@ void initialization(State arr[10][10]) {
     }
 }
 
-void displayMap(State arr[10][10], bool isEnemy, Coordinates bomb) {
+void displayMap(State arr[10][10], bool isEnemy) {
     for (int i = 0; i < 10; i++) {
         std::cout << "----------------------------------------" << std::endl;
         for (int j = 0; j < 10; j++) {
             std::cout << "| ";
-            if (arr[i][j] == State::Ship && !isEnemy) {
-                std::cout << "#" << " ";
-            } else if (arr[i][j] == arr[bomb.x - 1][bomb.y - 1] && arr[i][j] == State::DestroyedShip && isEnemy) {
-                std::cout << "X" << " ";
-            } else if (arr[i][j] == arr[bomb.x - 1][bomb.y - 1] && arr[i][j] == State::Miss && isEnemy) {
-                std::cout << "." << " ";
-            } else {
-                std::cout << " " << " ";
+
+            char charOutput = ' ';
+            switch(arr[i][j]) {
+                case State::Ship:
+                    charOutput = isEnemy ? ' ' : '#';
+                    break;
+                case State::DestroyedShip:
+                    charOutput = 'X';
+                    break;
+                case State::Miss:
+                    charOutput = '.';
+                    break;
+                case State::Empty:
+                default:
+                    charOutput = ' ';
             }
+            std::cout << charOutput << " ";
         }
         std::cout << "|" << std::endl;
     }

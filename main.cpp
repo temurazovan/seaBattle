@@ -49,22 +49,29 @@ int main() {
         while (true) {
             std::cout << "Player 1, enter coordinates [x][y] [x1][y1] to bomb ship: ";
             std::cin >> bomb.x >> bomb.y;
-            if (checkBombCoordinates(bomb.x, bomb.y)) { //&& map2[bomb.x - 1][bomb.y - 1] == State::Ship) {
+            if (checkBombCoordinates(bomb.x, bomb.y) && map2[bomb.x - 1][bomb.y - 1] == State::Ship) {
                 bombShip(bomb.x, bomb.y, map2);
-                displayMap(map2, true, bomb);
+                displayMap(map2, true);
+            } else if (checkBombCoordinates(bomb.x, bomb.y) && map2[bomb.x - 1][bomb.y - 1] != State::Ship){
+                bombShip(bomb.x, bomb.y, map2);
+                displayMap(map2, true);
+                break;
             } else {
                 break;
             }
         }
 
-
         // пока координаты проходят проверку И это попадение в корабль
         while (true) {
             std::cout << "Player 2, enter coordinates [x][y] [x1][y1] to bomb ship: ";
             std::cin >> bomb.x >> bomb.y;
-            if (checkBombCoordinates(bomb.x, bomb.y)) { //&& map1[bomb.x - 1][bomb.y - 1] == State::Ship) {
+            if (checkBombCoordinates(bomb.x, bomb.y) && map1[bomb.x - 1][bomb.y - 1] == State::Ship) {
                 bombShip(bomb.x, bomb.y, map1);
-                displayMap(map1, true, bomb);
+                displayMap(map1, true);
+            } else if (checkBombCoordinates(bomb.x, bomb.y) && map1[bomb.x - 1][bomb.y - 1] != State::Ship){
+                bombShip(bomb.x, bomb.y, map1);
+                displayMap(map1, true);
+                break;
             } else {
                 break;
             }
