@@ -177,6 +177,7 @@ void autoInputShip(State map[10][10], Decks &ship) {
     srand(time(nullptr));
     int shipSize = 3;
     int count = 0;
+
     while (count <= 10) {
         int direction = rand() % 2;
         //вертикальное положение корабля
