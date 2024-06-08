@@ -19,4 +19,8 @@ struct Decks {
     int fourDeck = 0; //кол-во четырехпалубных
 };
 
+class Ships {
+    
+};
+
 #endif

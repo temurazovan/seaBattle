@@ -44,6 +44,7 @@ void placeShip(Coordinates begin, Coordinates end, State arr[10][10]) {
         for (int j = begin.y - 1; j <= end.y - 1; j++) {
             if (arr[i][j] == State::Empty) {
                 arr[i][j] = State::Ship;
+                displayMap(arr, false);
             }
         }
     }
@@ -72,6 +73,7 @@ bool checkCoordinates(Coordinates first, Coordinates second, State arr[10][10]) 
         std::cout << "This cell is already busy" << std::endl;
         return false;
     }
+    //если стоят вплотную
     for (int i = first.x - 1; i <= second.x - 1; i++) {
         for (int j = first.y - 1; j <= second.y - 1; j++) {
             if (arr[i][j] == State::Empty
@@ -80,7 +82,9 @@ bool checkCoordinates(Coordinates first, Coordinates second, State arr[10][10]) 
                     || arr[i][j + 1] != State::Empty
                     || arr[i][j - 1] != State::Empty
                     || arr[i + 1][j + 1] != State::Empty
-                    || arr[i - 1][j - 1] != State::Empty)
+                    || arr[i - 1][j - 1] != State::Empty
+                    || arr[i + 1][j - 1] != State::Empty
+                    || arr[i - 1][j + 1] != State::Empty)
                 && ((i - 1 > 0)
                     || (i + 1 < 9)
                     || (j - 1 > 0)
