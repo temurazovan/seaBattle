@@ -1,4 +1,5 @@
 #include <iostream>
+#include <random>
 #include "types.cpp"
 
 
@@ -17,7 +18,7 @@ void displayMap(State arr[10][10], bool isEnemy) {
             std::cout << "| ";
 
             char charOutput = ' ';
-            switch(arr[i][j]) {
+            switch (arr[i][j]) {
                 case State::Ship:
                     charOutput = isEnemy ? ' ' : '#';
                     break;
@@ -75,16 +76,16 @@ bool checkCoordinates(Coordinates first, Coordinates second, State arr[10][10]) 
         for (int j = first.y - 1; j <= second.y - 1; j++) {
             if (arr[i][j] == State::Empty
                 && (arr[i + 1][j] != State::Empty
-                || arr[i - 1][j] != State::Empty
-                || arr[i][j + 1] != State::Empty
-                || arr[i][j - 1] != State::Empty
-                || arr[i + 1][j + 1] != State::Empty
-                || arr[i - 1][j - 1] != State::Empty)
+                    || arr[i - 1][j] != State::Empty
+                    || arr[i][j + 1] != State::Empty
+                    || arr[i][j - 1] != State::Empty
+                    || arr[i + 1][j + 1] != State::Empty
+                    || arr[i - 1][j - 1] != State::Empty)
                 && ((i - 1 > 0)
-                || (i + 1 < 9)
-                || (j - 1 > 0)
-                || (j + 1 < 9))
-                ) {
+                    || (i + 1 < 9)
+                    || (j - 1 > 0)
+                    || (j + 1 < 9))
+                    ) {
                 std::cout << "It is impossible to place ship like that!" << std::endl;
                 return false;
             }
@@ -169,6 +170,51 @@ bool checkBombCoordinates(int x, int y) {
     }
 
     return true;
+}
+
+void autoInputShip(State map[10][10], Decks &ship) {
+    Coordinates begin{}, end{};
+    srand(time(nullptr));
+    int shipSize = 3;
+    int count = 0;
+    while (count <= 10) {
+        int direction = rand() % 2;
+        //вертикальное положение корабля
+        if (direction == 0) {
+            begin.y = end.y = rand() % 10 + 1;
+            begin.x = 1 + rand() % 10;
+            end.x = begin.x + shipSize;
+        }
+        //горизонтальное положение корабля
+        if (direction == 1) {
+            begin.x = end.x = rand() % 10 + 1;
+            begin.y = 1 + rand() % 10;
+            end.y = begin.y + shipSize;
+        }
+        if (shipCounter(deckCounter(begin, end), ship)) {
+            placeShip(begin, end, map);
+        }
+
+        if (shipSize == 3 && count == 0) {
+            count++;
+            shipSize--;
+        }
+        if (shipSize == 2 && count <= 3) {
+            count++;
+            if (count == 3) {
+                shipSize--;
+            }
+        }
+        if (shipSize == 1 && count <= 6) {
+            count++;
+            if (count == 6) {
+                shipSize--;
+            }
+        }
+        if (shipSize == 0) {
+            count++;
+        }
+    }
 }
 
 void inputShip(State map[10][10], Decks &ship) {
