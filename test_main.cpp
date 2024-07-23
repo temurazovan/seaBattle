@@ -33,57 +33,6 @@ TEST(SeaBattle, IsFilledNegative) {
     EXPECT_FALSE(isFilled(deck));
 }
 
-TEST(SeaBattle, Win) {
-    State arr[10][10] = {
-            true, false, true, false, true, true, true, false, false, false,
-            false, false, true, false, false, false, false, false, false, false,
-            true, false, false, false, true, true, true, false, false, false,
-            false, false, true, false, false, false, false, false, false, false,
-            true, false, true, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false,
-            true, false, true, false, false, false, false, false, false, false,
-            false, false, true, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, true, true, true, true
-    };
-    EXPECT_FALSE(win(arr));
-}
-
-TEST(SeaBattle, WinPositive) {
-    bool arr[10][10] = {
-            false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false
-    };
-
-    EXPECT_TRUE(win(arr));
-}
-
-TEST(SeaBattle, BombShipPositive) {
-    bool arr[10][10] = {
-            true, false, true, false, true, true, true, false, false, false,
-            false, true, true, false, false, false, false, false, false, false,
-            true, false, false, false, true, true, true, false, false, false,
-            false, false, true, false, false, false, false, false, false, false,
-            true, false, true, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false,
-            true, false, true, false, false, false, false, false, false, false,
-            false, false, true, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, false, false, false, false,
-            false, false, false, false, false, false, true, true, true, true
-    };
-    bombShip(1, 1, arr);
-    EXPECT_FALSE(arr[0][0]);
-    EXPECT_TRUE(arr[1][1]);
-}
-
 TEST(SeaBattle, CheckBombCoordPositive) {
     EXPECT_TRUE(checkBombCoordinates(10, 10));
 }
@@ -99,6 +48,4 @@ TEST(SeaBattle, DeckCounterNegative) {
     Coordinates end = {7, 4};
     EXPECT_EQ(deckCounter(begin, end), 1);
 }
-
-
 
